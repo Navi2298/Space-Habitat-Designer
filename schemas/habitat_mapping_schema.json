@@ -1,0 +1,187 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://example.com/habitat_mapping_schema.json",
+  "title": "Habitat Visualization Mapping Schema",
+  "description": "Defines the structure and mapping rules between habitat design parameters and visual/layout generation outputs.",
+  "type": "object",
+
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Unique name or reference for the habitat design."
+    },
+    "location": {
+      "type": "string",
+      "enum": ["Moon", "Mars", "Transit", "Cis-Lunar", "Deep Space", "Other"],
+      "description": "Primary habitat environment or mission location."
+    },
+    "crew": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 12,
+      "description": "Number of crew members supported by this habitat."
+    },
+    "durationDays": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Expected mission duration in Earth days."
+    },
+    "material": {
+      "type": "string",
+      "enum": ["Metallic", "Inflatable", "Hybrid", "Regolith-Printed", "Composite", "Other"],
+      "description": "Primary construction material or configuration."
+    },
+    "shape": {
+      "type": "string",
+      "enum": ["Flat", "Multi-Level", "Radial", "Cylindrical", "Torus", "Custom"],
+      "description": "Geometric form or layout pattern of the habitat."
+    },
+    "maxEnvelope": {
+      "type": "object",
+      "description": "Physical envelope limits for deployment or fairing fit.",
+      "properties": {
+        "diameter_m": {
+          "type": "number",
+          "minimum": 1
+        },
+        "length_m": {
+          "type": "number",
+          "minimum": 1
+        },
+        "height_m": {
+          "type": "number",
+          "minimum": 1
+        }
+      },
+      "required": ["diameter_m"]
+    },
+    "requiredZones": {
+      "type": "array",
+      "description": "List of internal zones/functions that must be included in the habitat layout.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "LifeSupport",
+              "Sleeping",
+              "Medical",
+              "Sanitation",
+              "Galley",
+              "Wardroom",
+              "Lab",
+              "Storage",
+              "Exercise",
+              "EVA",
+              "Command",
+              "Recreation",
+              "Other"
+            ]
+          },
+          "priority": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 10
+          },
+          "count": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "required": ["type", "priority"]
+      }
+    },
+    "adjacencyConstraints": {
+      "type": "array",
+      "description": "Adjacency and separation rules between zones, inspired by NASA standards.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "a": { "type": "string", "description": "First zone type." },
+          "b": { "type": "string", "description": "Second zone type." },
+          "score": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 3,
+            "description": "0=same allowed, 1=adjacent preferred, 2=separate by buffer, 3=separate by bulkhead."
+          },
+          "constraintType": {
+            "type": "string",
+            "enum": ["hard", "soft"],
+            "default": "soft"
+          }
+        },
+        "required": ["a", "b", "score"]
+      }
+    },
+    "floors": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 5,
+      "description": "Number of decks or levels in the habitat."
+    },
+    "layoutPattern": {
+      "type": "string",
+      "enum": ["Linear", "Hub-and-Spoke", "Stacked", "Ring", "Custom"],
+      "description": "Base internal arrangement pattern."
+    },
+    "nhvMultiplier": {
+      "type": "number",
+      "minimum": 0.5,
+      "maximum": 2.0,
+      "default": 1.0,
+      "description": "Multiplier applied to baseline Net Habitable Volume (NHV) to adjust for material efficiency or inflatable structures."
+    },
+    "redundancyLevel": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 5,
+      "default": 1,
+      "description": "Indicates redundancy level for critical systems (0 = none, 5 = full backup)."
+    },
+    "storageModules": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Number of dedicated storage modules allocated by duration tier."
+    },
+    "floorArea": {
+      "type": "array",
+      "items": { "type": "number", "minimum": 0 },
+      "description": "List of floor areas (m²) per level."
+    },
+    "durationTier": {
+      "type": "string",
+      "enum": ["Short", "Mid", "Long"],
+      "description": "Categorized duration range for mission planning."
+    },
+    "environmentType": {
+      "type": "string",
+      "enum": ["Surface", "Transit", "Orbit", "DeepSpace"],
+      "description": "General environmental context, used to drive visualization background."
+    },
+    "tweakRules": {
+      "type": "object",
+      "description": "Rules governing user adjustments and system validation during layout tweaking.",
+      "properties": {
+        "allowDrag": { "type": "boolean", "default": true },
+        "gridSnap_m": { "type": "number", "default": 0.5 },
+        "violationPolicy": {
+          "type": "string",
+          "enum": ["block-hard", "warn-soft", "allow"],
+          "default": "warn-soft"
+        }
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "author": { "type": "string" },
+        "version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+$" },
+        "timestamp": { "type": "string", "format": "date-time" }
+      }
+    }
+  },
+
+  "required": ["name", "location", "crew", "durationDays", "material", "shape", "requiredZones"]
+}
