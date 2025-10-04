@@ -114,7 +114,7 @@ def params_page():
                 
                 # --- 1. Habitat Location (Select) ---
                 ui.select(
-                    options=["Moon/Lunar Surface", "Transit (Deep Space, Cis-Lunar)", "Mars Transit/Surface"],
+                    options=["Moon/Lunar Surface", "Transit (Deep Space, Cis-Lunar)", "Transit (Moon to Mars)", "Mars Surface"],
                     label="Habitat Location",
                 ).classes('w-full').props('dark filled').bind_value(current_parameters, 'location')
 
