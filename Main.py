@@ -1,46 +1,35 @@
+# ...existing code...
 import os
 from nicegui import ui, app
-from typing import Callable
 
-# --- Import Pages ---
-from frontend.pages.page_1_landing import landing_page
-from frontend.pages.page_2_params import params_page 
-
-# --- Global Configuration ---
-
+# --- Global Configuration (no UI creation at import) ---
 def configure_app():
-    """Sets up global configuration and styling for NiceGUI."""
-    
+    """Sets up global configuration and styling for NiceGUI at startup."""
     # 1. Set up paths for static files (e.g., NASA logo)
-    app.add_static_files('/Images', 'frontend/pages/Images') 
-    
-    # 2. Enable dark mode globally
+    app.add_static_files('/Images', 'frontend/pages/Images')
+    # 2. Enable dark mode (executed on startup, not at import)
     ui.dark_mode().enable()
 
 def define_routes():
     """
-    Defines all application routes using the NiceGUI ui.page decorator.
-    This function is intended to be called during app startup.
+    Register application routes. Imports pages here to avoid importing
+    modules that create UI at import time.
     """
-    
-    # 1. Landing Page (Default Route)
+    # Import pages inside the startup handler to avoid global UI creation
+    from frontend.pages.page_1_landing import landing_page
+    from frontend.pages.page_2_params import params_page
+
     @ui.page('/')
     def index():
         """Renders the main landing page with the project overview."""
         landing_page()
 
-    # 2. Parameters Input Page
     @ui.page('/parameters')
     def parameters_route():
-        """
-        Renders the page for defining habitat mission parameters.
-        """
-        # Center the content container using Tailwind classes
+        """Renders the page for defining habitat mission parameters."""
         with ui.row().classes('w-screen h-screen items-center justify-center'):
-            # CALL the params_page with no arguments (matching its definition)
-            params_page() 
+            params_page()
 
-    # 3. Placeholder Result Page
     @ui.page('/result')
     def result_page():
         """Placeholder for the final design and visualization page."""
@@ -52,10 +41,9 @@ def define_routes():
 
 # --- Run the App ---
 if __name__ in {"__main__", "__mp_main__"}:
-    configure_app()
-    
-    # CRITICAL FIX: Use app.on_startup to register the routes,
-    # which is the most reliable way to avoid the global scope RuntimeError.
-    app.on_startup(define_routes) 
-    
+    # Register startup handlers (configure app and register routes)
+    app.on_startup(configure_app)
+    app.on_startup(define_routes)
+
     ui.run(title="Artemis Habitat Blueprint", reload=True)
+# ...existing code...
