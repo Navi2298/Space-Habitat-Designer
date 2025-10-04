@@ -44,6 +44,16 @@ def landing_page():
                 z-index: 10;
                 position: relative;
             }
+
+            /* New CSS for the logo */
+            .hackathon-logo {
+                position: fixed;
+                bottom: 1rem;
+                right: 1rem;
+                width: 375px; /* Increased from 150px to 375px (2.5x) */
+                opacity: 0.7; /* Make it subtle */
+                z-index: 100;
+            }
         </style>
         
         <!-- Star Field Container -->
@@ -76,7 +86,6 @@ def landing_page():
 
             for (let i = 0; i < numStars; i++) {
                 // Generate stars with varying sizes and base animation speeds
-                // UPDATED: Changed size from (0.5 to 2.5) to (1.0 to 4.0) for larger stars
                 let size = (Math.random() * 3) + 1.0; 
                 let duration = 3 + (Math.random() * 4); // Duration between 3s and 7s
                 starField.appendChild(createStar(size, duration));
@@ -84,33 +93,32 @@ def landing_page():
         </script>
     """)
 
-    # 2. Main Content Container
+    # --- 2. Hackathon Logo (New Element) ---
+    # UPDATED path to use the exact file name provided by the user.
+    ui.image('frontend/pages/Images/NASA-SPACE-APPS-Logo.png').classes('hackathon-logo')
+
+    # 3. Main Content Container
     with ui.row().classes('w-screen h-screen items-center justify-center'):
         with ui.column().classes('p-10 bg-gray-900/90 backdrop-blur-md rounded-3xl shadow-2xl max-w-2xl border border-blue-700/50 transition-all duration-500 hover:shadow-blue-500/80 content-container items-center'):
             
-            # Title
-            ui.label('Artemis Mission Habitat Designer').classes('text-5xl font-extrabold text-white leading-tight tracking-wider transition-colors duration-300')
-            ui.label('The blueprint for humanity\'s next home.').classes('text-xl text-blue-300 font-light mt-1 mb-6')
+            # Title 
+            ui.label('ARTEMIS HABITAT BLUEPRINT').classes('text-5xl font-extrabold text-white leading-tight tracking-wider transition-colors duration-300')
+            # Subtitle Updated
+            ui.label('Layout Designer for Lunar & Martian Missions.').classes('text-xl text-blue-300 font-light mt-1 mb-6')
             
             ui.separator().classes('w-full border-t-2 border-blue-600/70')
             
             # Description
             with ui.markdown(
                 """
-                ### Purpose & Solution
-                This application helps space architects **rapidly prototype** crewed habitat designs for lunar and Martian missions. 
+                The **Habitat Blueprint Designer** is a professional-grade visual tool engineered to **accelerate the preliminary design phase** of crewed lunar and Martian habitats. Recognizing the complexity of integrating diverse mission functions within stringent launch and deployment envelopes, this application offers **rapid prototyping** powered by mission constraints.
                 
-                By defining mission parameters, the system instantly generates a compliant initial layout based on required living volumes. 
-                
-                **The solution?** Rapid iteration, instant constraint feedback, and a tool that keeps your design grounded in real-world mission needs.
+                Users define core parameters—such as crew size and mission duration—to generate an initial layout compliant with required functional volumes. Leverage the interactive 2D editor to **dynamically partition the habitat** and receive **instant, rule-based feedback** on sizing and placement, ensuring rigorous adherence to critical mission specifications.
                 """
             ).classes('text-lg text-gray-200 text-center space-y-4'):
                 # Custom styling for elements inside the markdown for better contrast
                 ui.run_javascript(
                     """
-                    document.querySelectorAll('.nicegui-markdown h3').forEach(h => {
-                        h.classList.add('text-blue-400', 'font-extrabold', 'mt-4');
-                    });
                     document.querySelectorAll('.nicegui-markdown strong').forEach(s => {
                         s.classList.add('text-yellow-300');
                     });
