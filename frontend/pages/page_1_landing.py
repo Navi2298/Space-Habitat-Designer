@@ -94,11 +94,10 @@ def landing_page():
     """)
 
     # --- 2. Hackathon Logo (New Element) ---
-    # UPDATED path to use the exact file name provided by the user.
-    ui.image('frontend/pages/Images/NASA-SPACE-APPS-Logo.png').classes('hackathon-logo')
+    ui.image('Images/NASA-SPACE-APPS-Logo.png').classes('hackathon-logo')
 
-    # 3. Main Content Container
-    with ui.row().classes('w-screen h-screen items-center justify-center'):
+    # --- 3. Main Content Container ---
+    with ui.column().classes('absolute-center items-center'): 
         with ui.column().classes('p-10 bg-gray-900/90 backdrop-blur-md rounded-3xl shadow-2xl max-w-2xl border border-blue-700/50 transition-all duration-500 hover:shadow-blue-500/80 content-container items-center'):
             
             # Title 
@@ -126,4 +125,8 @@ def landing_page():
                 )
             
             # Action button
-            ui.button('Start Designing Now', on_click=lambda: ui.open('/parameters')).classes('mt-10 w-64 h-14 bg-green-600 hover:bg-green-500 text-xl font-bold text-white shadow-lg shadow-green-500/50 transition-transform transform hover:scale-105 rounded-full')
+            # FIX: Switching to ui.navigate.to() as it is the most reliable way to force a client-side route change
+            ui.button(
+                'Start Designing Now', 
+                on_click=lambda: ui.navigate.to('/parameters')
+            ).classes('mt-10 w-64 h-14 bg-green-600 hover:bg-green-500 text-xl font-bold text-white shadow-lg shadow-green-500/50 transition-transform transform hover:scale-105 rounded-full')
