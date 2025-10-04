@@ -6,29 +6,25 @@
   "type": "object",
 
   "properties": {
-    "name": {
-      "type": "string",
-      "description": "Unique name or reference for the habitat design."
-    },
     "location": {
       "type": "string",
-      "enum": ["Moon", "Mars", "Transit", "Cis-Lunar", "Deep Space", "Other"],
+      "enum": ["Moon/Lunar Surface", "Transit (Deep Space, Cis-Lunar)", "Transit (Moon to Mars)", "Mars Surface"],
       "description": "Primary habitat environment or mission location."
     },
-    "crew": {
+    "crew_size": {
       "type": "integer",
-      "minimum": 1,
-      "maximum": 12,
+      "minimum": 2,
+      "maximum": 6,
       "description": "Number of crew members supported by this habitat."
     },
-    "durationDays": {
+    "mission_days": {
       "type": "integer",
-      "minimum": 1,
+      "enum": ["3 Days (Short Stay)", "30 Days (Standard Rotation)", "60 Days", "180 Days (Long Duration)", "1200+ Days (Mars Class)"],
       "description": "Expected mission duration in Earth days."
     },
-    "material": {
+    "habitat_material": {
       "type": "string",
-      "enum": ["Metallic", "Inflatable", "Hybrid", "Regolith-Printed", "Composite", "Other"],
+      "enum": ["Metallic Hard Shell", "Inflatable Softgoods", "Hybrid Structure", "Regolith-Printed"],
       "description": "Primary construction material or configuration."
     },
     "shape": {
@@ -183,5 +179,5 @@
     }
   },
 
-  "required": ["name", "location", "crew", "durationDays", "material", "shape", "requiredZones"]
+  "required": ["location", "crew", "durationDays", "material", "shape", "requiredZones"]
 }

@@ -150,7 +150,7 @@ def params_page():
 
                 # --- 6. Habitat Material (Select) ---
                 ui.select(
-                    options=["Metallic Hard Shell", "Inflatable Softgoods", "Hybrid Structure", "In-Situ (3D Printed)"],
+                    options=["Metallic Hard Shell", "Inflatable Softgoods", "Hybrid Structure", "Regolith-Printed"],
                     label="Habitat Material/Structure",
                 ).classes('w-full').props('dark filled').bind_value(current_parameters, 'habitat_material')
 
