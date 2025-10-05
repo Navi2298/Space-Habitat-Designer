@@ -5,8 +5,6 @@ def result_page(parameters):
     """
     Displays the generated habitat design based on the user's parameters.
     """
-    
-    # Generate the layout using the validated parameters
     layout_data = generate_layout(parameters)
 
     with ui.column().classes('w-full items-center p-8'):
@@ -19,8 +17,22 @@ def result_page(parameters):
                 ui.label('Layout Description').classes('text-h6')
                 ui.label(layout_data['description'])
 
-                ui.label('Modules').classes('text-h6 mt-4')
+                ui.label('Modules & Sizes').classes('text-h6 mt-4')
                 for module in layout_data['modules']:
-                    ui.chip(module, color='blue')
+                    size = layout_data['module_sizes'][module]
+                    with ui.expansion(module, icon='widgets').classes('mb-2'):
+                        ui.label(
+                            f"Area: {size['area_m2']} m² | Volume: {size['volume_m3']} m³ | "
+                            f"Dimensions: {size['width_m']}m x {size['depth_m']}m x {size['height_m']}m"
+                        )
+
+                ui.label('Floor Plan').classes('text-h6 mt-4')
+                for layer in layout_data['floor_plan']:
+                    ui.label(f"Layer {layer['layer']} (Radius: {layer['radius_m']:.2f} m)").classes('font-bold')
+                    for mod in layer['modules']:
+                        ui.label(
+                            f"  {mod['module']} at {mod['angle_deg']:.1f}° | "
+                            f"Distance from center: {mod['distance_from_center_m']:.2f} m"
+                        )
 
         ui.button('Start Over', on_click=lambda: ui.navigate.to('/')).classes('mt-8')
