@@ -47,13 +47,24 @@ def landing_page():
                 position: relative;
             }
 
-            /* New CSS for the logo: Moved to TOP LEFT */
+            /* --- Logo Positioning --- */
+            /* NASA Logo: Top Left */
             .hackathon-logo {
                 position: fixed;
                 top: 1rem;    /* Positioned at the top */
                 left: 1rem;   /* Positioned at the left */
-                width: 200px; /* Reduced size for top corner visibility */
-                opacity: 0.9; /* Slightly higher opacity */
+                width: 200px; /* Size */
+                opacity: 0.9; 
+                z-index: 100;
+            }
+            
+            /* Team Logo (NEW): Top Right */
+            .team-logo {
+                position: fixed;
+                top: 1rem;    /* Positioned at the top */
+                right: 1rem;  /* Positioned at the right */
+                width: 120px; /* Size, slightly smaller than the NASA logo */
+                opacity: 0.9;
                 z-index: 100;
             }
 
@@ -103,15 +114,18 @@ def landing_page():
         </script>
     """)
 
-    # --- 2. Hackathon Logo ---
+    # --- 2. Hackathon Logo (Top Left) ---
     ui.image('Images/NASA-SPACE-APPS-Logo.png').classes('hackathon-logo')
+
+    # --- 2.1. Team Logo (Top Right) ---
+    ui.image('Images/MyHab_logo.png').classes('team-logo')
 
     # --- 3. Main Content Container ---
     # We use a standard column here, and let the inner elements define their own width (max-w-2xl) or full width (w-screen).
     with ui.column().classes('main-page-column w-screen p-8 pt-20 pb-16 gap-10'): 
         
         # --- A. Primary Information and Action Card (Centered, max-width) ---
-        # Reverting max-w-4xl back to max-w-2xl for a smaller card width.
+        # Card width is set to max-w-2xl for the original, focused size.
         with ui.column().classes('p-10 bg-gray-900/90 backdrop-blur-md rounded-3xl shadow-2xl max-w-2xl border border-blue-700/50 transition-all duration-500 hover:shadow-blue-500/80 content-container items-center'):
             
             # Title 
@@ -148,7 +162,6 @@ def landing_page():
         # This wrapper spans the entire screen width (w-screen) and is centered in the main column (mx-auto).
         with ui.column().classes('w-screen bg-slate-900 py-16 mt-16 shadow-2xl shadow-blue-900/50 items-center'):
             # This inner column ensures the text content itself is centered and has a max width.
-            # Updated to max-w-6xl to make the Mission Context text section wider
             with ui.column().classes('max-w-6xl mx-auto px-8 items-center'):
             
                 ui.label('MyHab: Mission Context').classes('text-3xl font-extrabold text-teal-400 mb-6 text-center w-full tracking-wide')
