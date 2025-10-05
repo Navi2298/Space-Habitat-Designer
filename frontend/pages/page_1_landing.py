@@ -3,7 +3,7 @@ from nicegui import ui
 def landing_page():
     """Defines the content and layout for the landing page."""
     
-    # --- 1. Custom CSS for Animated Background ---
+    # --- 1. Custom CSS for Animated Background (No GSAP/ScrollTrigger imports) ---
     ui.add_head_html("""
         <style>
             /* Base dark background for the body */
@@ -47,24 +47,22 @@ def landing_page():
                 position: relative;
             }
 
-            /* New CSS for the logo */
+            /* New CSS for the logo: Moved to TOP LEFT */
             .hackathon-logo {
                 position: fixed;
-                bottom: 1rem;
-                right: 1rem;
-                width: 375px; /* Increased from 150px to 375px (2.5x) */
-                opacity: 0.7; /* Make it subtle */
+                top: 1rem;    /* Positioned at the top */
+                left: 1rem;   /* Positioned at the left */
+                width: 200px; /* Reduced size for top corner visibility */
+                opacity: 0.9; /* Slightly higher opacity */
                 z-index: 100;
             }
 
-            /* Custom class to center the whole page content column vertically on screen sizes larger than the content */
+            /* Custom class for page content column - now simply stacked content */
             .main-page-column {
                 display: flex;
                 flex-direction: column;
                 align-items: center;
-                /* min-h-screen ensures it takes at least one full viewport height */
                 min-height: 100vh;
-                /* justify-center is removed to allow content to flow from top, but we keep items-center */
             }
         </style>
         
@@ -105,16 +103,15 @@ def landing_page():
         </script>
     """)
 
-    # --- 2. Hackathon Logo (New Element) ---
-    # NOTE: Assuming 'Images/NASA-SPACE-APPS-Logo.png' is accessible via the NiceGUI static files system.
+    # --- 2. Hackathon Logo ---
     ui.image('Images/NASA-SPACE-APPS-Logo.png').classes('hackathon-logo')
 
-    # --- 3. Main Content Container (Changed to allow vertical flow) ---
-    # We now use a standard column that takes up the full width and at least the full height,
-    # with padding at the top and bottom to create spacing.
-    with ui.column().classes('main-page-column w-screen p-8 gap-10'): 
+    # --- 3. Main Content Container ---
+    # We use a standard column here, and let the inner elements define their own width (max-w-2xl) or full width (w-screen).
+    with ui.column().classes('main-page-column w-screen p-8 pt-20 pb-16 gap-10'): 
         
-        # --- A. Primary Information and Action Card ---
+        # --- A. Primary Information and Action Card (Centered, max-width) ---
+        # Reverting max-w-4xl back to max-w-2xl for a smaller card width.
         with ui.column().classes('p-10 bg-gray-900/90 backdrop-blur-md rounded-3xl shadow-2xl max-w-2xl border border-blue-700/50 transition-all duration-500 hover:shadow-blue-500/80 content-container items-center'):
             
             # Title 
@@ -131,7 +128,7 @@ def landing_page():
                 
                 Users define core parameters—such as crew size and mission duration—to generate an initial layout compliant with required functional volumes. Leverage the interactive 2D editor to **dynamically partition the habitat** and receive **instant, rule-based feedback** on sizing and placement, ensuring rigorous adherence to critical mission specifications.
                 """
-            ).classes('text-lg text-gray-200 text-center space-y-4'):
+            ).classes('text-base text-gray-200 text-center space-y-4'):
                 # Custom styling for elements inside the markdown for better contrast
                 ui.run_javascript(
                     """
@@ -144,31 +141,34 @@ def landing_page():
             # Action button
             ui.button(
                 'Start Designing Now', 
-                on_click=lambda: ui.navigate.to('/parameters') # Corrected navigation
+                on_click=lambda: ui.navigate.to('/parameters')
             ).classes('mt-10 w-64 h-14 bg-green-600 hover:bg-green-500 text-xl font-bold text-white shadow-lg shadow-green-500/50 transition-transform transform hover:scale-105 rounded-full')
         
-        # --- B. Background Story Card (New Section) ---
-        with ui.card().classes('bg-gray-900/70 backdrop-blur-sm text-white shadow-xl max-w-3xl p-6 rounded-xl border border-blue-700/50 mb-16 mt-8'):
+        # --- B. Background Story Data Strip (Full Width) ---
+        # This wrapper spans the entire screen width (w-screen) and is centered in the main column (mx-auto).
+        with ui.column().classes('w-screen bg-slate-900 py-16 mt-16 shadow-2xl shadow-blue-900/50 items-center'):
+            # This inner column ensures the text content itself is centered and has a max width.
+            # Updated to max-w-6xl to make the Mission Context text section wider
+            with ui.column().classes('max-w-6xl mx-auto px-8 items-center'):
             
-            ui.label('MyHab: Mission Context').classes('text-2xl font-semibold text-blue-400 mb-4 text-center w-full')
+                ui.label('MyHab: Mission Context').classes('text-3xl font-extrabold text-teal-400 mb-6 text-center w-full tracking-wide')
 
-            # Background Story Content
-            ui.markdown(
-                """
-                NASA plans to return humans to the **Moon** and enable a sustained presence there through the **Artemis campaign**. The Moon will serve as a proving ground for technologies and operational approaches that will inform future human missions to **Mars**. 
-                
-                Space habitats can potentially support crews on the Moon, in transit to Mars, and on the Martian surface, enabling **longer mission durations**, increased crew sizes, and comprehensive science investigations. Habitat designers must consider not only the structural, manufacturing, and material options but also the constraints imposed by **delivery/deployment methods** (e.g., the capacity of a lunar surface landing system and/or a launch vehicle). Additionally, a space habitat must provide numerous functions to support the required number of crew members for the specified mission duration at the final destination or while in transit.
-                
-                There are generally three different classes of space habitat structures: **metallic habitats** that are launched from Earth in their usable form, **inflatable habitats** that are stowed for launch and deployed at the point of use, and habitats that can be **manufactured on a planetary surface**, potentially from indigenous resources (**in-situ**). The challenge lies in creating a viable concept quickly, as existing tools often require a high level of expertise and significant time to evaluate multiple design options.
-                """
-            ).classes('text-base text-gray-300 text-justify space-y-4')
+                # Background Story Content
+                ui.markdown(
+                    """
+                    NASA plans to return humans to the **Moon** and enable a sustained presence there through the **Artemis campaign**. The Moon will serve as a proving ground for technologies and operational approaches that will inform future human missions to **Mars**. 
+                    
+                    Space habitats can potentially support crews on the Moon, in transit to Mars, and on the Martian surface, enabling **longer mission durations**, increased crew sizes, and comprehensive science investigations. Habitat designers must consider not only the structural, manufacturing, and material options but also the constraints imposed by **delivery/deployment methods** (e.g., the capacity of a lunar surface landing system and/or a launch vehicle). Additionally, a space habitat must provide numerous functions to support the required number of crew members for the specified mission duration at the final destination or while in transit.
+                    
+                    There are generally three different classes of space habitat structures: **metallic habitats** that are launched from Earth in their usable form, **inflatable habitats** that are stowed for launch and deployed at the point of use, and habitats that can be **manufactured on a planetary surface**, potentially from indigenous resources (**in-situ**). The challenge lies in creating a viable concept quickly, as existing tools often require a high level of expertise and significant time to evaluate multiple design options.
+                    """
+                ).classes('text-lg text-slate-300 text-justify space-y-4')
 
-    
-    ui.run_javascript(
-        """
-        // Select all text inside the background story markdown (class applied to the second card's markdown)
-        document.querySelectorAll('.bg-gray-900/70 .nicegui-markdown strong').forEach(s => {
-            s.classList.add('text-yellow-400'); // Slightly different emphasis color
-        });
-        """
-    )
+                # Run JavaScript to apply the yellow/gold color to bold text in the story section
+                ui.run_javascript(
+                    """
+                    document.querySelectorAll('.bg-slate-900 .nicegui-markdown strong').forEach(s => {
+                        s.classList.add('text-yellow-400');
+                    });
+                    """
+                )
