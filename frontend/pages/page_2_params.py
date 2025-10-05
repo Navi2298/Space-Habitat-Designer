@@ -1,5 +1,6 @@
 from nicegui import ui
 from typing import Dict, Any
+from visual_generation.schema_utils import validate_parameters
 
 # Define a storage dictionary for the parameters.
 class Parameters:
@@ -9,8 +10,8 @@ class Parameters:
         self.crew_size: int = 4
         self.mission_days: int = 30
         self.mission_type: str = "Exploration"
-        self.deployment_vehicle: str = "SLS"
-        self.habitat_material: str = "Metallic"
+        self.deployment_vehicle: str = "SLS Block 1B Cargo"
+        self.habitat_material: str = "Metallic Hard Shell"
 
 # Global state object to store the parameters
 current_parameters = Parameters()
@@ -154,8 +155,28 @@ def params_page():
                     label="Habitat Material/Structure",
                 ).classes('w-full').props('dark filled').bind_value(current_parameters, 'habitat_material')
 
+            def handle_generate_click():
+                # Convert the parameters object to a dictionary for validation
+                params_dict = {
+                    "location": current_parameters.location,
+                    "crew_size": current_parameters.crew_size,
+                    "mission_days": current_parameters.mission_days,
+                    "mission_type": current_parameters.mission_type,
+                    "deployment_vehicle": current_parameters.deployment_vehicle,
+                    "habitat_material": current_parameters.habitat_material,
+                }
+                
+                is_valid, message = validate_parameters(params_dict)
+                
+                if is_valid:
+                    ui.notify(message, type='positive')
+                    # Navigate to the results page on success
+                    ui.navigate.to('/result')
+                else:
+                    # Display the validation error to the user
+                    ui.notify(message, type='negative', multi_line=True, auto_close=False)
+
             # Action Button
-            # NICEGUI FIX: Correctly using ui.navigate.to('/result')
-            ui.button('Generate Initial Design', on_click=lambda: ui.navigate.to('/result')).classes('mt-8 w-full h-12 bg-blue-600 hover:bg-blue-500 text-lg font-bold shadow-lg shadow-blue-500/50 transition-transform transform hover:scale-[1.02] rounded-lg')
+            ui.button('Generate Initial Design', on_click=handle_generate_click).classes('mt-8 w-full h-12 bg-blue-600 hover:bg-blue-500 text-lg font-bold shadow-lg shadow-blue-500/50 transition-transform transform hover:scale-[1.02] rounded-lg')
         
     return current_parameters
