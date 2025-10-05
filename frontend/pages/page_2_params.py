@@ -170,6 +170,9 @@ def params_page():
                 
                 if is_valid:
                     ui.notify(message, type='positive')
+                    # Store parameters in session for result page
+                    from nicegui import app
+                    app.storage.user['parameters'] = params_dict
                     # Navigate to the results page on success
                     ui.navigate.to('/result')
                 else:

@@ -1,4 +1,3 @@
-# ...existing code...
 import os
 from nicegui import ui, app
 
@@ -18,6 +17,7 @@ def define_routes():
     # Import pages inside the startup handler to avoid global UI creation
     from frontend.pages.page_1_landing import landing_page
     from frontend.pages.page_2_params import params_page
+    from frontend.pages.page_3_result import result_page  # Import the result page
 
     @ui.page('/')
     def index():
@@ -31,12 +31,13 @@ def define_routes():
             params_page()
 
     @ui.page('/result')
-    def result_page():
-        """Placeholder for the final design and visualization page."""
-        with ui.column().classes('absolute-center items-center'):
-            ui.label('Design Generation in Progress...').classes('text-4xl text-blue-400 font-bold')
-            ui.spinner('dots', size='lg', color='blue')
-            ui.button('Back to Parameters', on_click=lambda: ui.open('/parameters')).classes('mt-8')
+    def result_page_route():
+        """Renders the final design and visualization page."""
+        parameters = app.storage.user.get('parameters')  # Retrieve parameters from session
+        if parameters:
+            result_page(parameters)  # Pass parameters to result_page
+        else:
+            ui.label("Error: No parameters found. Please go back and enter them.").classes('text-red-500')
 
 
 # --- Run the App ---
@@ -45,5 +46,6 @@ if __name__ in {"__main__", "__mp_main__"}:
     app.on_startup(configure_app)
     app.on_startup(define_routes)
 
-    ui.run(title="Artemis Habitat Blueprint", reload=True)
-# ...existing code...
+    # Add a storage_secret for user storage
+    storage_secret = os.urandom(32).hex()
+    ui.run(title="Artemis Habitat Blueprint", reload=True, storage_secret=storage_secret)
