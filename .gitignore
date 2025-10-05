@@ -203,3 +203,19 @@ cython_debug/
 
 # Ignore NiceGUI user/session storage files
 storage-user-*
+
+# Visual Studio/C++ build files
+.vs/
+cpp_backend/build/
+cpp_backend/Release/
+cpp_backend/*.sln
+cpp_backend/*.vcxproj*
+cpp_backend/.vs/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# OS-generated files
+.DS_Store
+Thumbs.db

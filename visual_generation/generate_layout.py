@@ -1,5 +1,7 @@
 import json
-from jsonschema import validate, ValidationError
+import subprocess
+import sys
+import os
 import random
 import math
 
@@ -90,75 +92,60 @@ def generate_floor_plan(modules, module_sizes, total_area, layers=1):
 
 def generate_layout(parameters):
     """
-    Generates a conceptual habitat layout and a multi-layered floor plan.
+    Calls the C++ backend executable to generate the habitat layout.
+    It passes parameters via stdin and receives results via stdout.
     """
-    crew_size = parameters.get('crew_size', 4)
-    mission_days = parameters.get('mission_days', 30)
-    habitat_material = parameters.get('habitat_material', 'Metallic Hard Shell')
-    location = parameters.get('location', 'Unknown')
-    mission_type = parameters.get('mission_type', 'Exploration')
+    try:
+        # Determine the path to the C++ executable
+        # Assumes this script is in 'visual_generation' and the executable is in 'cpp_backend'
+        project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        executable_name = "habitat_optimizer.exe" if sys.platform == "win32" else "habitat_optimizer"
+        executable_path = os.path.join(project_root, "cpp_backend", executable_name)
 
-    area_per_crew = calculate_area_per_crew(mission_days, habitat_material)
-    total_area = area_per_crew * crew_size
+        if not os.path.exists(executable_path):
+            return {
+                "status": "error",
+                "description": f"Backend executable not found at {executable_path}. Please compile the C++ project.",
+                "image_url": "",
+                "modules": []
+            }
 
-    # Required modules
-    modules = [
-        "Private Quarters",
-        "Washroom/Hygiene",
-        "Waste Management (Human)",
-        "Waste Management (Trash)",
-        "Gym",
-        "Habitation",
-        "Storage"
-    ]
-    if mission_type == "Science & Research":
-        modules.append("Laboratory")
-    if mission_type == "Exploration":
-        modules.append("Airlock")
-    if mission_days > 180:
-        modules.append("Greenhouse")
-    if crew_size > 4:
-        modules.append("Medical Bay")
+        # The C++ backend expects the parameters to be nested under a "habitat" key
+        input_data = {"habitat": parameters}
+        input_json = json.dumps(input_data)
 
-    # Calculate module sizes
-    module_sizes = {}
-    for module in modules:
-        w, d, h = module_dimensions(module)
-        area = round(w * d, 2)
-        volume = round(w * d * h, 2)
-        module_sizes[module] = {
-            "width_m": w,
-            "depth_m": d,
-            "height_m": h,
-            "area_m2": area,
-            "volume_m3": volume
+        # Run the C++ process
+        process = subprocess.run(
+            [executable_path],
+            input=input_json,
+            capture_output=True,
+            text=True,
+            check=True, # Throws an exception if the process returns a non-zero exit code
+            encoding='utf-8'
+        )
+
+        # Parse the JSON output from the C++ process
+        return json.loads(process.stdout)
+
+    except subprocess.CalledProcessError as e:
+        # If the C++ process returns an error, capture its stderr
+        return {
+            "status": "error",
+            "description": f"The C++ backend failed with an error:\n{e.stderr}",
+            "image_url": "",
+            "modules": []
         }
-
-    # Distribute total area among modules (main Habitation gets largest share)
-    main_hab_area = round(total_area * 0.35, 2)
-    if "Habitation" in module_sizes:
-        module_sizes["Habitation"]["area_m2"] = main_hab_area
-
-    # Determine number of layers/floors
-    layers = 1
-    if crew_size > 4 or mission_days > 180:
-        layers = 2
-
-    # Generate floor plan
-    floor_plan = generate_floor_plan(modules, module_sizes, total_area, layers)
-
-    layout_description = (
-        f"{habitat_material} habitat for {crew_size} crew on a {mission_days}-day {location} mission.\n"
-        f"Total recommended area: {total_area:.1f} m² ({area_per_crew:.1f} m² per crew).\n"
-        f"Modules included: {', '.join(modules)}.\n"
-        f"Main habitation module area: {main_hab_area} m².\n"
-        f"Arranged in {layers} layer(s) with radial/circular layout."
-    )
-
-    return {
-        "modules": modules,
-        "module_sizes": module_sizes,
-        "description": layout_description,
-        "floor_plan": floor_plan,
-        "image_url": f"https://picsum.photos/seed/{random.randint(1, 1000)}/800/600"
-    }
+    except json.JSONDecodeError:
+        return {
+            "status": "error",
+            "description": "Failed to parse the JSON output from the C++ backend.",
+            "image_url": "",
+            "modules": []
+        }
+    except Exception as e:
+        return {
+            "status": "error",
+            "description": f"An unexpected error occurred while running the backend: {str(e)}",
+            "image_url": "",
+            "modules": []
+        }
