@@ -18,12 +18,13 @@ def result_page(parameters):
                 ui.label(layout_data['description'])
 
                 ui.label('Modules & Sizes').classes('text-h6 mt-4')
-                for module in layout_data['modules']:
-                    size = layout_data['module_sizes'][module]
-                    with ui.expansion(module, icon='widgets').classes('mb-2'):
+                for module_data in layout_data['modules']:
+                    module_name = module_data['name']
+                    size = layout_data['module_sizes'][module_name]
+                    with ui.expansion(module_name, icon='widgets').classes('mb-2'):
                         ui.label(
-                            f"Area: {size['area_m2']} m² | Volume: {size['volume_m3']} m³ | "
-                            f"Dimensions: {size['width_m']}m x {size['depth_m']}m x {size['height_m']}m"
+                            f"Area: {size['area_m2']:.2f} m² | Volume: {size['volume_m3']:.2f} m³ | "
+                            f"Dimensions: {size['width_m']:.2f}m x {size['depth_m']:.2f}m x {size['height_m']:.2f}m"
                         )
 
                 ui.label('Floor Plan').classes('text-h6 mt-4')
