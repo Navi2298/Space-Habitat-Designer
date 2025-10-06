@@ -8,6 +8,15 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
+// Enum to define module categories for adjacency rules
+enum class ModuleCategory {
+    CLEAN,
+    DIRTY,
+    NEUTRAL,
+    QUIET,
+    NOISY
+};
+
 struct Vertex {
     glm::vec3 Position;
     glm::vec3 Normal;
@@ -17,6 +26,7 @@ struct Vertex {
 struct HabitatObject {
     std::string name;
     std::string function;
+    ModuleCategory category = ModuleCategory::NEUTRAL;
     
     // Geometry Representation
     std::vector<Vertex> vertices;

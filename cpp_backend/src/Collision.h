@@ -36,4 +36,28 @@ namespace Collision {
                (point.y >= obj.aabb_min.y && point.y <= obj.aabb_max.y) &&
                (point.z >= obj.aabb_min.z && point.z <= obj.aabb_max.z);
     }
+
+    /**
+     * @brief Calculates the volume of overlap between two habitat objects' AABBs.
+     * @param a The first habitat object.
+     * @param b The second habitat object.
+     * @return The volume of overlap in cubic meters, or 0 if no overlap.
+     */
+    inline float calculateOverlapVolume(const HabitatObject& a, const HabitatObject& b) {
+        // Ensure AABBs are up-to-date
+        const_cast<HabitatObject&>(a).updateAABB();
+        const_cast<HabitatObject&>(b).updateAABB();
+
+        if (!checkAABBCollision(a, b)) {
+            return 0.0f;
+        }
+
+        // Calculate overlap dimensions
+        float xOverlap = std::min(a.aabb_max.x, b.aabb_max.x) - std::max(a.aabb_min.x, b.aabb_min.x);
+        float yOverlap = std::min(a.aabb_max.y, b.aabb_max.y) - std::max(a.aabb_min.y, b.aabb_min.y);
+        float zOverlap = std::min(a.aabb_max.z, b.aabb_max.z) - std::max(a.aabb_min.z, b.aabb_min.z);
+
+        // Calculate overlap volume
+        return xOverlap * yOverlap * zOverlap;
+    }
 }

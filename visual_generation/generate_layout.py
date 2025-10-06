@@ -99,16 +99,21 @@ def generate_layout(parameters):
         # Determine the path to the C++ executable
         # Assumes this script is in 'visual_generation' and the executable is in 'cpp_backend'
         project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        executable_name = "habitat_optimizer.exe" if sys.platform == "win32" else "habitat_optimizer"
-        executable_path = os.path.join(project_root, "cpp_backend", executable_name)
+        executable_name = "habitat_optimizer.exe"
+        # Correctly locate the executable in the build directory
+        executable_path = os.path.join(project_root, "cpp_backend", "build", "Release", executable_name)
 
         if not os.path.exists(executable_path):
-            return {
-                "status": "error",
-                "description": f"Backend executable not found at {executable_path}. Please compile the C++ project.",
-                "image_url": "",
-                "modules": []
-            }
+            # Fallback for Debug builds
+            executable_path_debug = os.path.join(project_root, "cpp_backend", "build", "Debug", executable_name)
+            if os.path.exists(executable_path_debug):
+                executable_path = executable_path_debug
+            else:
+                return {
+                    "status": "error",
+                    "description": f"Backend executable not found in Release or Debug build directories. Looked for: {executable_path}",
+                    "modules": []
+                }
 
         # The C++ backend expects the parameters to be nested under a "habitat" key
         input_data = {"habitat": parameters}

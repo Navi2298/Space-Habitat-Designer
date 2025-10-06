@@ -1,0 +1,50 @@
+{
+    "habitat_dimensions": {
+        "cylindrical_base_diameter_m": 20,
+        "total_height_m": 30
+    },
+    "modules": [
+        {
+            "name": "Living Quarters",
+            "category": "QUIET",
+            "position": {
+                "x": 0,
+                "y": 5,
+                "z": 10
+            },
+            "scale": {
+                "x": 4,
+                "y": 4,
+                "z": 3
+            }
+        },
+        {
+            "name": "Lab Module",
+            "category": "CLEAN",
+            "position": {
+                "x": -5,
+                "y": -2,
+                "z": 15
+            },
+            "scale": {
+                "x": 3,
+                "y": 3,
+                "z": 3
+            }
+        },
+        {
+            "name": "Storage",
+            "category": "NEUTRAL",
+            "position": {
+                "x": 6,
+                "y": -3,
+                "z": 5
+            },
+            "scale": {
+                "x": 5,
+                "y": 4,
+                "z": 4
+            }
+        }
+    ]
+}

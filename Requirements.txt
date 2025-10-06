@@ -1,2 +1,6 @@
 nicegui
 jsonschema
+svgwrite
+reportlab
+three
+pillow  # Required for image handling in PDF generation
