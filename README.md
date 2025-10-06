@@ -102,24 +102,6 @@ git push origin main
 📜 7. License and Contact
 This project is licensed under the MIT License.
 
-Role
 
-Team Member
-
-Project Lead
-
-Davyani Vasta
-
-Developer
-
-Davyani Vasta
-
-Developer
-
-Parishat Tanakoor
-
-Contact
-
-Davyani Vasta - qwertyright26@gmail.com
 
 
