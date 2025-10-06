@@ -57,10 +57,15 @@ source venv/bin/activate
 Install Dependencies:
 
 pip install nicegui
+
 pip install jsonschema
+
 pip install svgwrite
+
 pip install reportlab
+
 pip install three
+
 pip installpillow 
 
 Run the Application:
